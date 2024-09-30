@@ -1,7 +1,7 @@
 const clocks = [
-    { id: 1, timezoneOffset: 2, country: '', city: '' },
-    { id: 2, timezoneOffset: -5, country: '', city: '' },
-    { id: 3, timezoneOffset: 1, country: '', city: '' }
+    { id: 1, timezoneOffset: 2, country: 'Netherlands', city: 'Amsterdam' },
+    { id: 2, timezoneOffset: -5, country: 'USA', city: 'New York' },
+    { id: 3, timezoneOffset: 1, country: 'Germany', city: 'Berlin' }
 ];
 
 function displayTime(clock) {
@@ -27,7 +27,8 @@ function displayTime(clock) {
     min.style.transform = `rotate(${mRotation}deg)`;
     sec.style.transform = `rotate(${sRotation}deg)`;
 
-    location.textContent = `${clock.city} ${clock.country}`;
+    const ampm = hh >= 12 ? 'PM' : 'AM';
+    location.textContent = `${clock.city}, ${clock.country}  (${ampm})`;
 }
 
 function updateClocks() {
