@@ -101,3 +101,8 @@ document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
         }
     });
 });
+
+// // Show an alert when the user enters the site
+// window.onload = function() {
+//     alert('Cities with a space in their name should be written with an underscore. For example, "New_York" instead of "New York".');
+// };
