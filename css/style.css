@@ -3,20 +3,37 @@
     padding: 0;
     box-sizing: border-box;
     font-family: sans-serif;
-    color: var(--white);
+    color: var(--background-color);
 }
 
 
 :root {
     --white: white;
-    --background-color:#212121;
+    --black: black;
     --border:#ffffff80;
     --red:#ff3d58;
-    --clock-color:#222;
-    --clock-border-color:#ffffff40;
-    --box-shadow:#ffffff4d;
-    
+    --clock-color:#ffffffe6;
 }
+
+body.light-mode {
+    --white: black;
+    --black: white;
+    --border:#00000080;
+    --red:#ff3d58;
+    --clock-color:#000000ab;
+    --placeholder: #ffffffb2;
+    background-image: url(../assets/background-light.png);
+    color: var(--black);
+}
+
+body.light-mode .clock {
+    box-shadow: 0 0 10px var(--border);
+}
+
+body.light-mode input::placeholder {
+    color: var(--placeholder);
+}
+
 
 body {
     display: grid;
@@ -38,13 +55,16 @@ body {
 }
 
 .search-bar {
-    width: 75%;
+    width: 65%;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid var(--border);
     background-color: var(--clock-color);
     border-radius: 5px;
     text-transform: capitalize;
+    outline: none;
+    text-align: center;
+    font-weight: 600;
 }
 
 .clock-wrapper {
@@ -62,7 +82,6 @@ body {
     height: 300px;
     border-radius: 50%;
     background-color: var(--clock-color);
-    box-shadow: 0px 0px 30px var(--box-shadow);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -88,7 +107,7 @@ body {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: var(--white);
+    background-color: var(--black);
     z-index: 2;
 }
 
@@ -106,12 +125,12 @@ body {
 }
 
 .hour-hand i {
-    background-color: var(--border);
-    height: 70px;
+    background-color: var(--black);
+    height: 67px;
 }
 
 .minute-hand i {
-    background-color: var(--white);
+    background-color: var(--black);
     height: 100px;
 }
 
@@ -121,17 +140,42 @@ body {
 }
 
 .location {
-    font-size: 18px;
-    color: var(--border);
+    font-size: 1.3rem;
+    color: var(--clock-color);
+}
+
+#light-mode-toggle {
+    cursor: pointer;
+    font-size: 24px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+#light-mode-toggle i {
+    color: var(--clock-color);
+}
+
+.fa-moon,
+.fa-sun {
+    width: 1rem;
+    height: 1rem;
 }
 
 @media screen and (max-width: 1000px) {
     body {
         grid-template-columns: 1fr;
+        padding: 7% 10%;
     }
 
     .clock-wrapper:first-child {
-        margin-top: 50px;
+        padding-top: 150px;
+    }
+
+    .clock {
+        width: 250px;
+        height: 250px;
     }
 
     .clock-wrapper {

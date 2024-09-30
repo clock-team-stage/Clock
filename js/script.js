@@ -102,7 +102,21 @@ document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
     });
 });
 
-// // Show an alert when the user enters the site
-// window.onload = function() {
-//     alert('Cities with a space in their name should be written with an underscore. For example, "New_York" instead of "New York".');
-// };
+// Show an alert when the user enters the site
+window.onload = function() {
+    alert('Cities with a space in their name should be written with an underscore. For example, "New_York" instead of "New York".');
+};
+
+// Light mode toggle functionality
+const lightModeToggle = document.getElementById('light-mode-toggle');
+lightModeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+    const icon = lightModeToggle.querySelector('i');
+    if (document.body.classList.contains('light-mode')) {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+    } else {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+    }
+});
