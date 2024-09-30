@@ -10,17 +10,17 @@
 :root {
     --white: white;
     --black: black;
-    --border:#ffffff80;
-    --red:#ff3d58;
-    --clock-color:#ffffffe6;
+    --border: #ffffff80;
+    --red: #ff3d58;
+    --clock-color: #ffffffe6;
 }
 
 body.light-mode {
     --white: black;
     --black: white;
-    --border:#00000080;
-    --red:#ff3d58;
-    --clock-color:#000000ab;
+    --border: #00000080;
+    --red: #ff3d58;
+    --clock-color: #000000ab;
     --placeholder: #ffffffb2;
     background-image: url(../assets/background-light.png);
     color: var(--black);

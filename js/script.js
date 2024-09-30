@@ -40,12 +40,14 @@ updateClocks();
 async function fetchTimezoneInfo(query) {
     const apiKey = 'MK04YCQE07V2'; // Replace with your TimezoneDB API key
     try {
+        // Replace spaces with underscores in the query
+        const formattedQuery = query.replace(/\s+/g, '_');
         const response = await fetch(`http://api.timezonedb.com/v2.1/list-time-zone?key=${apiKey}&format=json`);
         const data = await response.json();
         const timezones = data.zones;
 
         const matchingTimezone = timezones.find(tz =>
-            tz.zoneName.toLowerCase().includes(query.toLowerCase())
+            tz.zoneName.toLowerCase().includes(formattedQuery.toLowerCase())
         );
 
         if (matchingTimezone) {
@@ -69,7 +71,7 @@ async function fetchTimezoneInfo(query) {
 
 function debounce(func, wait) {
     let timeout;
-    return function(...args) {
+    return function (...args) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, args), wait);
     };
@@ -102,8 +104,6 @@ document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
     });
 });
 
-
-
 // Light mode toggle functionality
 const lightModeToggle = document.getElementById('light-mode-toggle');
 lightModeToggle.addEventListener('click', () => {
@@ -117,10 +117,3 @@ lightModeToggle.addEventListener('click', () => {
         icon.classList.add('fa-moon');
     }
 });
-
-// Show an alert when the user enters the site
-window.onload = function() {
-    setTimeout(() => {
-        alert('Cities with a space in their name should be written with an underscore. For example, "New_York" instead of "New York".');
-    }, 500);
-};
