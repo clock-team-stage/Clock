@@ -163,10 +163,43 @@ body {
     height: 1rem;
 }
 
+    .scroll-button {
+        position: fixed;
+        width: 50px;
+        height: 50px;
+        font-size: 1.4rem;
+        cursor: pointer;
+        z-index: 1000;
+        background-color: var(--clock-color);
+        color: var(--background-color);
+        border: none;
+        border-radius: 50%;
+        display: none;
+    }
+
+    .scroll-button i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    #scroll-top {
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    #scroll-bottom {
+        bottom: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
 @media screen and (max-width: 1000px) {
     body {
         grid-template-columns: 1fr;
-        padding: 7% 10%;
+        padding: 0 10%;
     }
 
     .clock-wrapper:first-child {
@@ -180,5 +213,6 @@ body {
 
     .clock-wrapper {
         gap: 20px;
+        height: 100vh;
     }
 }

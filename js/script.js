@@ -104,6 +104,59 @@ document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
     });
 });
 
+// Scroll buttons functionality
+const scrollTopButton = document.getElementById('scroll-top');
+const scrollBottomButton = document.getElementById('scroll-bottom');
+
+let currentClockIndex = 0;
+
+function scrollToClock(index) {
+    const clockWrapper = document.querySelectorAll('.clock-wrapper')[index];
+    const clockWrapperRect = clockWrapper.getBoundingClientRect();
+    const scrollTop = window.scrollY;
+    const offset = clockWrapperRect.top + scrollTop - (window.innerHeight / 2) + (clockWrapperRect.height / 2);
+
+    window.scrollTo({
+        top: offset,
+        behavior: 'smooth'
+    });
+}
+
+scrollTopButton.addEventListener('click', () => {
+    if (currentClockIndex > 0) {
+        currentClockIndex--;
+        scrollToClock(currentClockIndex);
+    }
+});
+
+scrollBottomButton.addEventListener('click', () => {
+    if (currentClockIndex < clocks.length - 1) {
+        currentClockIndex++;
+        scrollToClock(currentClockIndex);
+    }
+});
+
+function updateScrollButtons() {
+    const scrollTop = window.scrollY;
+    const scrollHeight = document.body.scrollHeight;
+    const clientHeight = window.innerHeight;
+
+    if (scrollTop > 0) {
+        scrollTopButton.style.display = 'block';
+    } else {
+        scrollTopButton.style.display = 'none';
+    }
+
+    if (scrollTop + clientHeight < scrollHeight) {
+        scrollBottomButton.style.display = 'block';
+    } else {
+        scrollBottomButton.style.display = 'none';
+    }
+}
+
+window.addEventListener('scroll', updateScrollButtons);
+window.addEventListener('load', updateScrollButtons);
+
 // Light mode toggle functionality
 const lightModeToggle = document.getElementById('light-mode-toggle');
 lightModeToggle.addEventListener('click', () => {
