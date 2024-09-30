@@ -13,6 +13,7 @@
     --border: #ffffff80;
     --red: #ff3d58;
     --clock-color: #ffffffe6;
+    --toptext: #ccc;
 }
 
 body.light-mode {
@@ -22,6 +23,7 @@ body.light-mode {
     --red: #ff3d58;
     --clock-color: #000000ab;
     --placeholder: #ffffffb2;
+    --toptext: #333;
     background-image: url(../assets/background-light.png);
     color: var(--black);
 }
@@ -111,6 +113,14 @@ body {
     z-index: 2;
 }
 
+.toptext {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+    color: var(--toptext);
+}
+
 .hand {
     position: absolute;
     display: flex;
@@ -163,38 +173,38 @@ body {
     height: 1rem;
 }
 
-    .scroll-button {
-        position: fixed;
-        width: 50px;
-        height: 50px;
-        font-size: 1.4rem;
-        cursor: pointer;
-        z-index: 1000;
-        background-color: var(--clock-color);
-        color: var(--background-color);
-        border: none;
-        border-radius: 50%;
-        display: none;
-    }
+.scroll-button {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    z-index: 1000;
+    background-color: var(--clock-color);
+    color: var(--background-color);
+    border: none;
+    border-radius: 50%;
+    display: none;
+}
 
-    .scroll-button i {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-    
-    #scroll-top {
-        top: 60px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    
-    #scroll-bottom {
-        bottom: 60px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+.scroll-button i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#scroll-top {
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#scroll-bottom {
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
 @media screen and (max-width: 1000px) {
     body {
