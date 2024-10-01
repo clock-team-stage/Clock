@@ -10,6 +10,11 @@ function displayTime(clock) {
     const sec = document.getElementById(`sec${clock.id}`);
     const location = document.getElementById(`location${clock.id}`);
 
+    if (!hr || !min || !sec || !location) {
+        console.error(`Elements for clock ID ${clock.id} not found.`);
+        return;
+    }
+
     const date = new Date();
     const utcHours = date.getUTCHours();
     const utcMinutes = date.getUTCMinutes();
@@ -28,7 +33,7 @@ function displayTime(clock) {
     sec.style.transform = `rotate(${sRotation}deg)`;
 
     const ampm = hh >= 12 ? 'PM' : 'AM';
-    location.textContent = `${clock.city}, ${clock.country}  (${ampm})`;
+    location.textContent = `${clock.city}, ${clock.country} (${ampm})`;
 }
 
 function updateClocks() {
@@ -39,27 +44,28 @@ setInterval(updateClocks, 1000);
 updateClocks();
 
 async function fetchTimezoneInfo(query) {
-    const apiKey = 'MK04YCQE07V2'; // Replace with your TimezoneDB API key
+    const apiKey = 'MK04YCQE07V2';
     try {
-        // Replace spaces with underscores in the query
         const formattedQuery = query.replace(/\s+/g, '_');
         const response = await fetch(`http://api.timezonedb.com/v2.1/list-time-zone?key=${apiKey}&format=json`);
         const data = await response.json();
         const timezones = data.zones;
 
         const matchingTimezone = timezones.find(tz =>
-            tz.zoneName.toLowerCase().includes(formattedQuery.toLowerCase())
+            tz.zoneName.toLowerCase().includes(formattedQuery.toLowerCase()) ||
+            tz.countryCode.toLowerCase().includes(formattedQuery.toLowerCase()) ||
+            tz.countryName.toLowerCase().includes(formattedQuery.toLowerCase())
         );
 
         if (matchingTimezone) {
-            const offset = matchingTimezone.gmtOffset / 3600; // Convert seconds to hours
-            const [area, ...locationParts] = matchingTimezone.zoneName.split('/');
-            const location = locationParts.join(', ').replace(/_/g, ' ');
+            const offset = matchingTimezone.gmtOffset / 3600;
+            const country = matchingTimezone.countryName;
+            const city = matchingTimezone.zoneName.split('/').pop().replace(/_/g, ' ');
 
             return {
                 offset: offset,
-                country: area,
-                city: location
+                country: country,
+                city: city
             };
         } else {
             return { error: 'Timezone not found' };
@@ -105,7 +111,89 @@ document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
     });
 });
 
-// Scroll buttons functionality
+// Function to add a new clock
+function addClock() {
+    const newId = clocks.length + 1;
+    const predefinedClock = clocks[(newId - 1) % clocks.length]; // Cycle through predefined clocks
+
+    clocks.push({
+        id: newId,
+        timezoneOffset: predefinedClock.timezoneOffset,
+        country: predefinedClock.country,
+        city: predefinedClock.city
+    });
+
+    const clockWrapper = document.createElement('div');
+    clockWrapper.className = 'clock-wrapper';
+    clockWrapper.innerHTML = `
+        <input type="text" id="search${newId}" class="search-bar" placeholder="Search for a city..." autocomplete="off">
+        <div class="container">
+            <div class="clock">
+                <div id="hour${newId}" class="hand hour-hand"><i></i></div>
+                <div id="min${newId}" class="hand minute-hand"><i></i></div>
+                <div id="sec${newId}" class="hand second-hand"><i></i></div>
+                <span style="--index: 1"><b>1</b></span>
+                <span style="--index: 2"><b>2</b></span>
+                <span style="--index: 3"><b>3</b></span>
+                <span style="--index: 4"><b>4</b></span>
+                <span style="--index: 5"><b>5</b></span>
+                <span style="--index: 6"><b>6</b></span>
+                <span style="--index: 7"><b>7</b></span>
+                <span style="--index: 8"><b>8</b></span>
+                <span style="--index: 9"><b>9</b></span>
+                <span style="--index: 10"><b>10</b></span>
+                <span style="--index: 11"><b>11</b></span>
+                <span style="--index: 12"><b>12</b></span>
+            </div>
+        </div>
+        <div id="location${newId}" class="location"></div>
+    `;
+    document.body.appendChild(clockWrapper);
+
+    const searchBar = clockWrapper.querySelector('.search-bar');
+    searchBar.addEventListener('input', debounce(async (event) => {
+        const query = event.target.value;
+        if (query.length > 2) {
+            const timezoneInfo = await fetchTimezoneInfo(query);
+            if (timezoneInfo && !timezoneInfo.error) {
+                clocks[newId - 1].timezoneOffset = timezoneInfo.offset;
+                clocks[newId - 1].country = timezoneInfo.country;
+                clocks[newId - 1].city = timezoneInfo.city;
+                updateClocks();
+            }
+        }
+    }, 500));
+
+    searchBar.addEventListener('keydown', async (event) => {
+        if (event.key === 'Enter') {
+            const query = event.target.value;
+            if (query.length > 2) {
+                const timezoneInfo = await fetchTimezoneInfo(query);
+                if (timezoneInfo && timezoneInfo.error) {
+                    alert(timezoneInfo.error || 'Timezone info not found');
+                }
+            }
+        }
+    });
+
+    updateClocks();
+}
+
+function removeClock() {
+    if (clocks.length > 1) {
+        clocks.pop();
+        const clockWrappers = document.querySelectorAll('.clock-wrapper');
+        const lastClockWrapper = clockWrappers[clockWrappers.length - 1];
+        lastClockWrapper.remove();
+    } else {
+        
+    }
+}
+
+document.getElementById('add-clock').addEventListener('click', addClock);
+document.getElementById('remove-clock').addEventListener('click', removeClock);
+
+// Responsive buttons 
 const scrollTopButton = document.getElementById('scroll-top');
 const scrollBottomButton = document.getElementById('scroll-bottom');
 
@@ -158,7 +246,6 @@ function updateScrollButtons() {
 window.addEventListener('scroll', updateScrollButtons);
 window.addEventListener('load', updateScrollButtons);
 
-// Light mode toggle functionality
 const lightModeToggle = document.getElementById('light-mode-toggle');
 lightModeToggle.addEventListener('click', () => {
     document.body.classList.toggle('light-mode');
