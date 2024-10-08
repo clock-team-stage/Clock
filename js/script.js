@@ -85,6 +85,18 @@ function debounce(func, wait) {
 }
 
 document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
+    // searchBar.addEventListener('input', debounce(async (event) => {
+    //     const query = event.target.value;
+    //     if (query.length > 2) {
+    //         const timezoneInfo = await fetchTimezoneInfo(query);
+    //         if (timezoneInfo && !timezoneInfo.error) {
+    //             clocks[index].timezoneOffset = timezoneInfo.offset;
+    //             clocks[index].country = timezoneInfo.country;
+    //             clocks[index].city = timezoneInfo.city;
+    //             updateClocks();
+    //         }
+    //     }
+    // }, 500));
     searchBar.addEventListener('input', debounce(async (event) => {
         const query = event.target.value;
         if (query.length > 2) {
@@ -94,9 +106,24 @@ document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
                 clocks[index].country = timezoneInfo.country;
                 clocks[index].city = timezoneInfo.city;
                 updateClocks();
+                saveClocksToLocalStorage();  // Opslaan van klokinformatie
             }
         }
     }, 500));
+
+    function loadClocksFromLocalStorage() {
+        const storedClocks = localStorage.getItem('clocks');
+        if (storedClocks) {
+            const parsedClocks = JSON.parse(storedClocks);
+            clocks.length = 0;
+            clocks.push(...parsedClocks);
+            updateClocks();
+        }
+    }
+    
+    window.addEventListener('load', loadClocksFromLocalStorage);
+    saveClocksToLocalStorage();
+    
 
     searchBar.addEventListener('keydown', async (event) => {
         if (event.key === 'Enter') {
@@ -112,9 +139,19 @@ document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
 });
 
 // Function to add a new clock
+// function addClock() {
+//     const newId = clocks.length + 1;
+//     const predefinedClock = clocks[(newId - 1) % clocks.length];
+
+//     clocks.push({
+//         id: newId,
+//         timezoneOffset: predefinedClock.timezoneOffset,
+//         country: predefinedClock.country,
+//         city: predefinedClock.city
+//     });
 function addClock() {
     const newId = clocks.length + 1;
-    const predefinedClock = clocks[(newId - 1) % clocks.length]; // Cycle through predefined clocks
+    const predefinedClock = clocks[(newId - 1) % clocks.length]; 
 
     clocks.push({
         id: newId,
@@ -149,6 +186,9 @@ function addClock() {
         <div id="location${newId}" class="location"></div>
     `;
     document.body.appendChild(clockWrapper);
+    saveClocksToLocalStorage();  // Opslaan van de bijgewerkte klokkenarray
+    updateClocks();  // Werk de klokken bij
+}
 
     const searchBar = clockWrapper.querySelector('.search-bar');
     searchBar.addEventListener('input', debounce(async (event) => {
@@ -177,7 +217,7 @@ function addClock() {
     });
 
     updateClocks();
-}
+
 
 function removeClock() {
     if (clocks.length > 1) {
@@ -243,8 +283,12 @@ function updateScrollButtons() {
     }
 }
 
+function saveClocksToLocalStorage() {
+    localStorage.setItem('clocks', JSON.stringify(clocks));
+}
+
 window.addEventListener('scroll', updateScrollButtons);
-window.addEventListener('load', updateScrollButtons);
+
 
 const lightModeToggle = document.getElementById('light-mode-toggle');
 lightModeToggle.addEventListener('click', () => {
