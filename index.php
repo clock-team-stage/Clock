@@ -35,8 +35,7 @@
             $conn->close();
             ?>
         ];
-
-        // Call updateClocks() to initialize the clock displays
+        
         updateClocks();
     </script>
 </body>

@@ -117,8 +117,17 @@ async function fetchClocks() {
     const fetchedClocks = await response.json();
     clocks.length = 0; // Clear existing clocks
     fetchedClocks.forEach(clock => {
-        clocks.push(clock);
-        renderClock(clock);
+        // Check if there's a cookie for this clock
+        const savedClock = getCookie(`clock_${clock.id}`);
+        if (savedClock) {
+            // Use the saved clock data
+            clocks.push(savedClock);
+            renderClock(savedClock);
+        } else {
+            // Use the fetched clock data
+            clocks.push(clock);
+            renderClock(clock);
+        }
     });
     updateClocks();
 }
@@ -158,7 +167,6 @@ async function updateClockInDatabase(clock) {
 }
 
 
-
 function setupSearchBar(searchBar, clockIndex) {
     searchBar.addEventListener('input', debounce(async (event) => {
         const query = event.target.value;
@@ -170,6 +178,8 @@ function setupSearchBar(searchBar, clockIndex) {
                 clocks[clockIndex].city = timezoneInfo.city;
                 updateClocks();
                 await updateClockInDatabase(clocks[clockIndex]);
+                // Save to cookie
+                setCookie(`clock_${clocks[clockIndex].id}`, clocks[clockIndex], 30); // Save for 30 days
             }
         }
     }, 500));
@@ -185,6 +195,8 @@ function setupSearchBar(searchBar, clockIndex) {
                     clocks[clockIndex].city = timezoneInfo.city;
                     updateClocks();
                     await updateClockInDatabase(clocks[clockIndex]);
+                    // Save to cookie
+                    setCookie(`clock_${clocks[clockIndex].id}`, clocks[clockIndex], 30); // Save for 30 days
                 } else {
                     alert(timezoneInfo.error || 'Timezone info not found');
                 }
@@ -192,7 +204,6 @@ function setupSearchBar(searchBar, clockIndex) {
         }
     });
 }
-
 
 async function addClock() {
     const query = prompt("Enter city or country name:");
@@ -225,6 +236,9 @@ async function addClock() {
     clocks.push(newClock);
     renderClock(newClock);
     updateClocks();
+
+    // Save new clock to cookie
+    setCookie(`clock_${newClock.id}`, newClock, 30); // Save for 30 days
 }
 
 
@@ -323,3 +337,21 @@ lightModeToggle.addEventListener('click', () => {
         icon.classList.add('fa-moon');
     }
 });
+
+
+function setCookie(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${JSON.stringify(value)};expires=${expires.toUTCString()};path=/`;
+}
+
+function getCookie(name) {
+    const nameEQ = `${name}=`;
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return JSON.parse(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+}
