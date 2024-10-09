@@ -124,6 +124,7 @@ async function fetchClocks() {
 window.addEventListener('load', fetchClocks);
 
 
+
 function debounce(func, wait) {
     let timeout;
     return function (...args) {
@@ -159,73 +160,6 @@ document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
     });
 });
 
-// Function to add a new clock
-// function addClock() {
-//     const newId = clocks.length + 1;
-//     const predefinedClock = clocks[(newId - 1) % clocks.length]; // Cycle through predefined clocks
-
-//     clocks.push({
-//         id: newId,
-//         timezoneOffset: predefinedClock.timezoneOffset,
-//         country: predefinedClock.country,
-//         city: predefinedClock.city
-//     });
-
-//     const clockWrapper = document.createElement('div');
-//     clockWrapper.className = 'clock-wrapper';
-//     clockWrapper.innerHTML = `
-//         <input type="text" id="search${newId}" class="search-bar" placeholder="Search for a city..." autocomplete="off">
-//         <div class="container">
-//             <div class="clock">
-//                 <div id="hour${newId}" class="hand hour-hand"><i></i></div>
-//                 <div id="min${newId}" class="hand minute-hand"><i></i></div>
-//                 <div id="sec${newId}" class="hand second-hand"><i></i></div>
-//                 <span style="--index: 1"><b>1</b></span>
-//                 <span style="--index: 2"><b>2</b></span>
-//                 <span style="--index: 3"><b>3</b></span>
-//                 <span style="--index: 4"><b>4</b></span>
-//                 <span style="--index: 5"><b>5</b></span>
-//                 <span style="--index: 6"><b>6</b></span>
-//                 <span style="--index: 7"><b>7</b></span>
-//                 <span style="--index: 8"><b>8</b></span>
-//                 <span style="--index: 9"><b>9</b></span>
-//                 <span style="--index: 10"><b>10</b></span>
-//                 <span style="--index: 11"><b>11</b></span>
-//                 <span style="--index: 12"><b>12</b></span>
-//             </div>
-//         </div>
-//         <div id="location${newId}" class="location"></div>
-//     `;
-//     document.body.appendChild(clockWrapper);
-
-//     const searchBar = clockWrapper.querySelector('.search-bar');
-//     searchBar.addEventListener('input', debounce(async (event) => {
-//         const query = event.target.value;
-//         if (query.length > 2) {
-//             const timezoneInfo = await fetchTimezoneInfo(query);
-//             if (timezoneInfo && !timezoneInfo.error) {
-//                 clocks[newId - 1].timezoneOffset = timezoneInfo.offset;
-//                 clocks[newId - 1].country = timezoneInfo.country;
-//                 clocks[newId - 1].city = timezoneInfo.city;
-//                 updateClocks();
-//             }
-//         }
-//     }, 500));
-
-//     searchBar.addEventListener('keydown', async (event) => {
-//         if (event.key === 'Enter') {
-//             const query = event.target.value;
-//             if (query.length > 2) {
-//                 const timezoneInfo = await fetchTimezoneInfo(query);
-//                 if (timezoneInfo && timezoneInfo.error) {
-//                     alert(timezoneInfo.error || 'Timezone info not found');
-//                 }
-//             }
-//         }
-//     });
-
-//     updateClocks();
-// }
 
 async function addClock() {
     const query = prompt("Enter city or country name:");
