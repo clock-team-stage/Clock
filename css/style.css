@@ -247,25 +247,6 @@ body {
     height: 50px;
 }
 
-
-.suggestions {
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ddd;
-    max-height: 150px;
-    overflow-y: auto;
-    z-index: 1000;
-}
-
-.suggestions div {
-    padding: 5px;
-    cursor: pointer;
-}
-
-.suggestions div:hover {
-    background-color: #f0f0f0;
-}
-
 @media screen and (max-width: 1000px) {
     body {
         grid-template-columns: 1fr;
