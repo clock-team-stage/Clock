@@ -105,9 +105,12 @@ function renderClock(clock) {
 
     document.body.appendChild(clockWrapper);
 
+    // Setup the search bar for this clock
+    const searchBar = clockWrapper.querySelector(`#search${clock.id}`);
+    setupSearchBar(searchBar, clocks.indexOf(clock));
+
     updateClocks();
 }
-
 
 async function fetchClocks() {
     const response = await fetch('fetch_clocks.php');
@@ -133,16 +136,40 @@ function debounce(func, wait) {
     };
 }
 
-document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
+
+async function updateClockInDatabase(clock) {
+    const response = await fetch('update_clock.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            id: clock.id,
+            timezoneOffset: clock.timezoneOffset,
+            country: clock.country,
+            city: clock.city
+        })
+    });
+
+    const result = await response.json();
+    if (!result.success) {
+        console.error('Error updating clock in database:', result.error);
+    }
+}
+
+
+
+function setupSearchBar(searchBar, clockIndex) {
     searchBar.addEventListener('input', debounce(async (event) => {
         const query = event.target.value;
         if (query.length > 2) {
             const timezoneInfo = await fetchTimezoneInfo(query);
             if (timezoneInfo && !timezoneInfo.error) {
-                clocks[index].timezoneOffset = timezoneInfo.offset;
-                clocks[index].country = timezoneInfo.country;
-                clocks[index].city = timezoneInfo.city;
+                clocks[clockIndex].timezoneOffset = timezoneInfo.offset;
+                clocks[clockIndex].country = timezoneInfo.country;
+                clocks[clockIndex].city = timezoneInfo.city;
                 updateClocks();
+                await updateClockInDatabase(clocks[clockIndex]);
             }
         }
     }, 500));
@@ -152,13 +179,19 @@ document.querySelectorAll('.search-bar').forEach((searchBar, index) => {
             const query = event.target.value;
             if (query.length > 2) {
                 const timezoneInfo = await fetchTimezoneInfo(query);
-                if (timezoneInfo && timezoneInfo.error) {
+                if (timezoneInfo && !timezoneInfo.error) {
+                    clocks[clockIndex].timezoneOffset = timezoneInfo.offset;
+                    clocks[clockIndex].country = timezoneInfo.country;
+                    clocks[clockIndex].city = timezoneInfo.city;
+                    updateClocks();
+                    await updateClockInDatabase(clocks[clockIndex]);
+                } else {
                     alert(timezoneInfo.error || 'Timezone info not found');
                 }
             }
         }
     });
-});
+}
 
 
 async function addClock() {
@@ -194,16 +227,6 @@ async function addClock() {
     updateClocks();
 }
 
-// function removeClock() {
-//     if (clocks.length > 1) {
-//         clocks.pop();
-//         const clockWrappers = document.querySelectorAll('.clock-wrapper');
-//         const lastClockWrapper = clockWrappers[clockWrappers.length - 1];
-//         lastClockWrapper.remove();
-//     } else {
-        
-//     }
-// }
 
 async function removeClock() {
     if (clocks.length === 0) return;
